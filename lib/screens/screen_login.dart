@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:hmanager/db_functions/urls.dart';
 
 import 'package:hmanager/screens/splash_screen.dart';
+import 'package:hmanager/widgets/show_snack_bar.dart';
 import 'package:hmanager/widgets/validator.dart';
 import 'package:http/http.dart' as http;
 import 'package:jwt_decoder/jwt_decoder.dart';
@@ -223,11 +224,11 @@ class _LoginPageState extends State<LoginPage> {
           errorText = 'The user is Inactive';
         });
       } else {
-        print(userId);
         navigateToHomeScreen(role, userId, cxt);
+        showSnackBar(context, 'User Already Logged In', Colors.green.shade400);
       }
     } else {
-      print('Something went wrong');
+      showSnackBar(context, 'Something went wrong', Colors.red.shade400);
     }
   }
 
@@ -257,11 +258,11 @@ class _LoginPageState extends State<LoginPage> {
             errorText = 'The user is Inactive';
           });
         } else {
-          print(userId);
           navigateToHomeScreen(role, userId, ctx);
+          showSnackBar(context, 'Logged In Succeful', Colors.green.shade400);
         }
       } else {
-        print('Something went wrong');
+        showSnackBar(context, 'Something went wrong', Colors.red.shade400);
       }
     }
   }

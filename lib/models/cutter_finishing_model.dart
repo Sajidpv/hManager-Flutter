@@ -43,5 +43,25 @@ class CutterFinishingModel {
   factory CutterFinishingModel.fromJson(Map<String, dynamic> json) =>
       _$CutterFinishingModelFromJson(json);
   Map<String, dynamic> toJson() => _$CutterFinishingModelToJson(this);
+
+  @override
+  String toString() {
+    return 'CutterFinishingModel{'
+        'date: $date, '
+        'proAssignID: $proAssignID, '
+        'batchID: $batchID, '
+        'productId: $productId, '
+        'materialId: $materialId, '
+        'employId: $employId, '
+        'layerCount: $layerCount, '
+        'meterLayer: $meterLayer, '
+        'pieceLayer: $pieceLayer, '
+        'quantity: $quantity, '
+        'balanceQuantity: $balance, '
+        'damageQuantity: $damage, '
+        'wasteQuantity: $wastage, '
+        'status: $status'
+        '}';
+  }
 }
 //  'date': Timestamp.fromDate(instance.date),date: timestamp.toDate(),

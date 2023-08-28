@@ -23,27 +23,25 @@ class Splash extends StatefulWidget {
 class _SplashState extends State<Splash> with SingleTickerProviderStateMixin {
   late AnimationController controller;
   bool isSplashFinished = false;
+
   @override
   void initState() {
+    super.initState();
+
     controller = AnimationController(
       vsync: this,
       duration: const Duration(seconds: 6),
-    )..addListener(() {});
+    )..addListener(() {
+        setState(() {}); // Trigger rebuild to update progress indicator
+      });
 
     controller.repeat(reverse: true);
-
-    super.initState();
 
     Future.delayed(Duration(seconds: 2)).then((_) {
       setState(() {
         isSplashFinished = true;
       });
     });
-  }
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
   }
 
   @override
@@ -58,40 +56,29 @@ class _SplashState extends State<Splash> with SingleTickerProviderStateMixin {
       backgroundColor: Theme.of(context).colorScheme.primary,
       body: isSplashFinished
           ? LoginPage()
-          // StreamBuilder<User?>(
-          //     stream: FirebaseAuth.instance.authStateChanges(),
-          //     builder: (context, snapshot) {
-          //       if (snapshot.connectionState == ConnectionState.waiting) {
-          //         return const Text(
-          //           'Loading...',
-          //           style: TextStyle(
-          //             fontSize: 20,
-          //             color: Color.fromARGB(255, 20, 21, 24),
-          //           ),
-          //         );
-          //       } else if (snapshot.hasData) {
-          //         final user = snapshot.data!;
-          //         checkUserLogged(context, user.email);
-          //         return Container();
-          //       } else {
-          //         return const LoginPage();
-          //       }
-          //     },
-          //   )
           : Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  CircularProgressIndicator(
-                    value: controller.value,
-                    semanticsLabel: 'Circular progress indicator',
-                    backgroundColor: Colors.white,
+                  Container(
+                    width: 60,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(20),
+                      border: Border.all(
+                        color: Colors.white,
+                        width: 2,
+                      ),
+                    ),
+                    child: LinearProgressIndicator(
+                      value: controller.value,
+                      backgroundColor: Colors.white,
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
                   ),
-                  const SizedBox(height: 16),
                   const Text(
-                    'Loading...',
+                    'Loading..',
                     style: TextStyle(
-                      fontSize: 20,
+                      fontSize: 10,
                       color: Color.fromARGB(255, 255, 255, 255),
                     ),
                   ),
@@ -101,25 +88,6 @@ class _SplashState extends State<Splash> with SingleTickerProviderStateMixin {
     );
   }
 }
-
-// Future<void> checkUserLogged(context, email) async {
-//   try {
-//     //final userDoc = FirebaseFirestore.instance.collection('users');
-//    // final userSnapshot = await userDoc.where('email', isEqualTo: email).get();
-
-//     if (userSnapshot.docs.isNotEmpty) {
-//       var userData = userSnapshot.docs.first.data();
-//       String userType = userData['type'];
-//       EmployeeModel employe = EmployeeModel.fromJson(userData);
-//       navigateToHomeScreen(userType, employe, context);
-//     } else {
-//       pageNavigator(LoginPage(), context);
-//     }
-//   } on FirebaseException catch (error) {
-//     ScaffoldMessenger.of(context).clearSnackBars();
-//     showSnackBar(context, error.message ?? 'Authentication Failed');
-//   }
-// }
 
 Future<void> pageNavigator(Widget page, BuildContext context) async {
   await Navigator.of(context).pushReplacement(MaterialPageRoute(
@@ -131,7 +99,11 @@ void navigateToHomeScreen(role, userId, BuildContext context) async {
   const Splash();
   switch (role) {
     case 'Admin':
-      pageNavigator(AdminHome(), context);
+      pageNavigator(
+          AdminHome(
+            empId: userId,
+          ),
+          context);
       break;
     case 'Production':
       pageNavigator(

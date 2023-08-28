@@ -1,4 +1,4 @@
-const String baseUrl = "http://13.127.174.224";
+const String baseUrl = "http://13.126.104.188";
 
 const String login = '$baseUrl/login';
 const String registration = "$baseUrl/registration";

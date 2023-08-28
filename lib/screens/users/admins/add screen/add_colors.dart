@@ -3,6 +3,7 @@ import 'package:hmanager/Services/api.dart';
 
 import 'package:hmanager/models/colors_model.dart';
 import 'package:hmanager/widgets/button.dart';
+import 'package:hmanager/widgets/show_snack_bar.dart';
 import 'package:hmanager/widgets/spacer.dart';
 import 'package:hmanager/widgets/validator.dart';
 
@@ -67,7 +68,12 @@ class AddColors extends StatelessWidget {
     final color = colorController.text;
 
     final model = ColorModel('', color: color);
-    CallApi.addColor(model);
+    final result = await CallApi.addColor(model);
+    if (result == true) {
+      showSnackBar(context, '$color Color Added', Colors.green.shade400);
+    } else {
+      showSnackBar(context, 'Error Occured', Colors.red.shade500);
+    }
     Navigator.pop(context);
   }
 }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hmanager/Services/api.dart';
 import 'package:hmanager/models/employee_model.dart';
+import 'package:hmanager/widgets/show_snack_bar.dart';
 import 'package:hmanager/widgets/validator.dart';
 import '../../../../widgets/spacer.dart';
 
@@ -322,8 +323,12 @@ class _SignUpPageState extends State<SignUpPage> {
       type: selectedUserType!,
       status: selectedStatus!,
     );
-    CallApi.registerEmployee(model);
-
+    final result = await CallApi.registerEmployee(model);
+    if (result == true) {
+      showSnackBar(context, '$empName Added', Colors.green.shade400);
+    } else {
+      showSnackBar(context, 'Error Occured', Colors.red.shade500);
+    }
     setState(() {
       isLoading = false;
     });

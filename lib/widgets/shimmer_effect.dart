@@ -6,36 +6,38 @@ class ShimmerListTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
-      itemCount: 11,
-      itemBuilder: (BuildContext context, int index) {
-        return Shimmer.fromColors(
-          highlightColor: Colors.grey.shade400,
-          baseColor: Colors.grey.shade100,
-          child: ListTile(
-            leading: const CircleAvatar(
-              radius: 25,
-              backgroundColor: Colors.white,
+    return Scaffold(
+      body: ListView.builder(
+        itemCount: 11,
+        itemBuilder: (BuildContext context, int index) {
+          return Shimmer.fromColors(
+            highlightColor: Colors.grey.shade400,
+            baseColor: Colors.grey.shade100,
+            child: ListTile(
+              leading: const CircleAvatar(
+                radius: 25,
+                backgroundColor: Colors.white,
+              ),
+              title: Container(
+                width: double.infinity,
+                height: 12.0,
+                color: Colors.white,
+              ),
+              subtitle: Container(
+                width: double.infinity,
+                height: 10.0,
+                margin: const EdgeInsets.only(top: 8.0),
+                color: Colors.white,
+              ),
+              trailing: Container(
+                width: 44.0,
+                height: 14.0,
+                color: Colors.white,
+              ),
             ),
-            title: Container(
-              width: double.infinity,
-              height: 12.0,
-              color: Colors.white,
-            ),
-            subtitle: Container(
-              width: double.infinity,
-              height: 10.0,
-              margin: const EdgeInsets.only(top: 8.0),
-              color: Colors.white,
-            ),
-            trailing: Container(
-              width: 44.0,
-              height: 14.0,
-              color: Colors.white,
-            ),
-          ),
-        );
-      },
+          );
+        },
+      ),
     );
   }
 }

@@ -9,6 +9,7 @@ import 'package:hmanager/models/tailer_finishing_model.dart';
 import 'package:hmanager/widgets/button.dart';
 import 'package:hmanager/widgets/error_visible_message.dart';
 import 'package:hmanager/widgets/select_date.dart';
+import 'package:hmanager/widgets/show_snack_bar.dart';
 import 'package:hmanager/widgets/spacer.dart';
 import 'package:hmanager/widgets/validator.dart';
 
@@ -341,7 +342,13 @@ class _TailerFinishItemState extends State<TailerFinishItem> {
         materialId: material,
         color: selectedcolor,
         status: '');
-    CallApi.finishTailer(model);
+    final result = await CallApi.finishTailer(model);
+
+    if (result == true) {
+      showSnackBar(context, 'Finished Successfully', Colors.green.shade400);
+    } else {
+      showSnackBar(context, 'Error Occured', Colors.red.shade500);
+    }
     Navigator.pop(context);
   }
 

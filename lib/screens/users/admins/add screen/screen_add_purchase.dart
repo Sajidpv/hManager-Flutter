@@ -10,6 +10,7 @@ import 'package:hmanager/screens/users/admins/add%20screen/screen_add_supplier.d
 import 'package:hmanager/widgets/button.dart';
 import 'package:hmanager/widgets/select_date.dart';
 import 'package:hmanager/widgets/shimmer_effect.dart';
+import 'package:hmanager/widgets/show_snack_bar.dart';
 import 'package:hmanager/widgets/spacer.dart';
 import 'package:hmanager/widgets/validator.dart';
 
@@ -583,7 +584,12 @@ class _AddPurchaseState extends State<AddPurchase> {
         supplier: selectedSupplier!.id,
         invoice: invoice,
         purID: '');
-    CallApi.registerPurchase(model);
+    final result = await CallApi.registerPurchase(model);
+    if (result == true) {
+      showSnackBar(context, 'New Purchase Added', Colors.green.shade400);
+    } else {
+      showSnackBar(context, 'Error Occured', Colors.red.shade500);
+    }
     discriptionController.clear();
     invoiceController.clear();
     setState(() {

@@ -7,6 +7,7 @@ import 'package:hmanager/models/employee_model.dart';
 import 'package:hmanager/models/tailer_assign_model.dart';
 import 'package:hmanager/widgets/button.dart';
 import 'package:hmanager/widgets/shimmer_effect.dart';
+import 'package:hmanager/widgets/show_snack_bar.dart';
 import 'package:hmanager/widgets/spacer.dart';
 import 'package:hmanager/widgets/validator.dart';
 
@@ -472,7 +473,13 @@ class _AssignToTailerState extends State<AssignToTailer> {
         materialId: selectedBatch!.materialId,
         empId: '');
 
-    CallApi.assignTailer(model, selectedProduct!.id);
+    final result = await CallApi.assignTailer(model, selectedProduct!.id);
+    if (result == true) {
+      showSnackBar(context, 'Assigned to ${selectedEmployee!.name} Added',
+          Colors.green.shade400);
+    } else {
+      showSnackBar(context, 'Error Occured', Colors.red.shade500);
+    }
     Navigator.pop(context);
   }
 }

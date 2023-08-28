@@ -9,6 +9,7 @@ import 'package:hmanager/screens/splash_screen.dart';
 import 'package:hmanager/screens/users/admins/add%20screen/add_product.dart';
 import 'package:hmanager/widgets/button.dart';
 import 'package:hmanager/widgets/shimmer_effect.dart';
+import 'package:hmanager/widgets/show_snack_bar.dart';
 import 'package:hmanager/widgets/spacer.dart';
 import 'package:hmanager/widgets/validator.dart';
 
@@ -418,7 +419,13 @@ class _AssignItemsState extends State<AssignItems> {
         productId: selectedProduct!.id,
         assignedQuantity: parsedQuantity,
         empID: '');
-    CallApi.assignCutter(model);
+    final result = await CallApi.assignCutter(model);
+    if (result == true) {
+      showSnackBar(context, 'Assigned to ${selectedEmployee!.name} Added',
+          Colors.green.shade400);
+    } else {
+      showSnackBar(context, 'Error Occured', Colors.red.shade500);
+    }
     Navigator.pop(context);
   }
 }

@@ -21,7 +21,8 @@ import '../../../widgets/tabbar.dart';
 late BuildContext myContext;
 
 class AdminHome extends StatefulWidget {
-  const AdminHome({super.key});
+  const AdminHome({super.key, required this.empId});
+  final String empId;
 
   @override
   // ignore: library_private_types_in_public_api
@@ -53,171 +54,197 @@ class _AdminHomeState extends State<AdminHome> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text(
-          'Admin Home',
-        ),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.home),
-            onPressed: () {
-              setState(() {
-                currentScreen = 'home';
-              });
+    return FutureBuilder<EmployeeModel?>(
+      future: CallApi.getEmployeeById(widget.empId),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const ShimmerListTile();
+        } else if (snapshot.hasError) {
+          return Text('Error: ${snapshot.error}');
+        } else if (snapshot.hasData && snapshot.data != null) {
+          EmployeeModel? user = snapshot.data;
+          return Scaffold(
+            appBar: AppBar(
+              title: Text(
+                'Admin Home',
+              ),
+              actions: [
+                IconButton(
+                  icon: const Icon(Icons.home),
+                  onPressed: () {
+                    setState(() {
+                      currentScreen = 'home';
+                    });
 
-              switchScreen(const Home());
-            },
-          ),
-        ],
-      ),
-      backgroundColor: Colors.grey.shade300,
-      drawer: Drawer(
-        child: ListView(
-          children: <Widget>[
-            const SizedBox(
-              height: 100,
-              child: DrawerHeader(
-                decoration: BoxDecoration(
-                  color: Colors.grey,
+                    switchScreen(const Home());
+                  },
                 ),
-                child: ListTile(
-                  title: Text(
-                    'Admin',
-                    style: TextStyle(
-                      color: Colors.black,
-                      fontSize: 24,
+              ],
+            ),
+            backgroundColor: Colors.grey.shade300,
+            drawer: Drawer(
+              child: ListView(
+                children: <Widget>[
+                  SizedBox(
+                    height: 90,
+                    child: DrawerHeader(
+                      decoration: BoxDecoration(
+                        color: Colors.grey,
+                      ),
+                      child: ListTile(
+                        title: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              user!.name,
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontSize: 20,
+                              ),
+                            ),
+                            Text(
+                              user.email,
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontSize: 12,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
                     ),
                   ),
-                ),
-              ),
-            ),
-            ListTile(
-              leading: const Icon(Icons.home),
-              title: const Text('Home'),
-              onTap: () {
-                switchScreen(const Home());
-                setState(() {
-                  currentScreen = 'home';
-                });
-                Navigator.pop(context);
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.build),
-              title: const Text('Production'),
-              onTap: () {
-                setState(() {
-                  currentScreen = 'production';
-                });
+                  ListTile(
+                    leading: const Icon(Icons.home),
+                    title: const Text('Home'),
+                    onTap: () {
+                      switchScreen(const Home());
+                      setState(() {
+                        currentScreen = 'home';
+                      });
+                      Navigator.pop(context);
+                    },
+                  ),
+                  ListTile(
+                    leading: const Icon(Icons.build),
+                    title: const Text('Production'),
+                    onTap: () {
+                      setState(() {
+                        currentScreen = 'production';
+                      });
 
-                switchScreen(const ProductionDetails());
-                Navigator.pop(context);
-              },
-            ),
-            ListTile(
-              enabled: false,
-              leading: const Icon(Icons.sell),
-              title: const Text('Sales'),
-              onTap: () {
-                setState(() {
-                  currentScreen = 'sales';
-                });
-                switchScreen(const SalesHome());
-                Navigator.pop(context);
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.shopping_bag),
-              title: const Text('Purchase'),
-              onTap: () {
-                setState(() {
-                  currentScreen = 'purchase';
-                });
-                switchScreen(const PurchaseHome());
-                Navigator.pop(context);
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.storage),
-              title: const Text('Stock'),
-              onTap: () {
-                setState(() {
-                  currentScreen = 'stock';
-                });
-                switchScreen(const StockHome());
-                Navigator.pop(context);
-              },
-            ),
-            ListTile(
-              enabled: false,
-              leading: const Icon(Icons.account_balance),
-              title: const Text('Accounts'),
-              onTap: () {
-                setState(() {
-                  currentScreen = 'accounts';
-                });
-                switchScreen(const AccountsHome());
-                Navigator.pop(context);
-              },
-            ),
-            const AboutListTile(
-              icon: Icon(
-                Icons.info,
-              ),
-              applicationIcon: Icon(
-                Icons.store,
-              ),
-              applicationName: 'HaashStore',
-              applicationVersion: '1.0.0',
-              applicationLegalese: '© 2023 Haash Technologies',
-              aboutBoxChildren: [
-                ///Content goes here...
-              ],
-              child: Text('About app'),
-            ),
-            ListTile(
-              leading: const Icon(Icons.logout),
-              title: const Text('Logout'),
-              onTap: () {
-                signOut(context);
-              },
-            ),
-          ],
-        ),
-      ),
-      body: activeScreen,
-      floatingActionButton: currentScreen == 'home'
-          ? FabWithIcons(
-              icons: icons1,
-              onIconTapped: (index) {},
-              tooltips: fabTooltips1,
-              screen: currentScreen!,
-            )
-          : currentScreen == 'production'
-              ? FabWithIcons(
-                  icons: icons2,
-                  onIconTapped: (index) {},
-                  tooltips: fabTooltips2,
-                  screen: currentScreen!,
-                )
-              : currentScreen == 'stock'
-                  ? FloatingActionButton(
-                      tooltip: 'Add Stock',
-                      onPressed: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => AddMaterial()));
-                      },
-                      child: const Icon(Icons.add),
-                    )
-                  : FabWithIcons(
-                      icons: icons3,
-                      onIconTapped: (index) {},
-                      tooltips: fabTooltips3,
-                      screen: currentScreen!,
+                      switchScreen(const ProductionDetails());
+                      Navigator.pop(context);
+                    },
+                  ),
+                  ListTile(
+                    enabled: false,
+                    leading: const Icon(Icons.sell),
+                    title: const Text('Sales'),
+                    onTap: () {
+                      setState(() {
+                        currentScreen = 'sales';
+                      });
+                      switchScreen(const SalesHome());
+                      Navigator.pop(context);
+                    },
+                  ),
+                  ListTile(
+                    leading: const Icon(Icons.shopping_bag),
+                    title: const Text('Purchase'),
+                    onTap: () {
+                      setState(() {
+                        currentScreen = 'purchase';
+                      });
+                      switchScreen(const PurchaseHome());
+                      Navigator.pop(context);
+                    },
+                  ),
+                  ListTile(
+                    leading: const Icon(Icons.storage),
+                    title: const Text('Stock'),
+                    onTap: () {
+                      setState(() {
+                        currentScreen = 'stock';
+                      });
+                      switchScreen(const StockHome());
+                      Navigator.pop(context);
+                    },
+                  ),
+                  ListTile(
+                    enabled: false,
+                    leading: const Icon(Icons.account_balance),
+                    title: const Text('Accounts'),
+                    onTap: () {
+                      setState(() {
+                        currentScreen = 'accounts';
+                      });
+                      switchScreen(const AccountsHome());
+                      Navigator.pop(context);
+                    },
+                  ),
+                  const AboutListTile(
+                    icon: Icon(
+                      Icons.info,
                     ),
+                    applicationIcon: Icon(
+                      Icons.store,
+                    ),
+                    applicationName: 'HaashStore',
+                    applicationVersion: '1.0.0',
+                    applicationLegalese: '© 2023 Haash Technologies',
+                    aboutBoxChildren: [
+                      ///Content goes here...
+                    ],
+                    child: Text('About app'),
+                  ),
+                  ListTile(
+                    leading: const Icon(Icons.logout),
+                    title: const Text('Logout'),
+                    onTap: () {
+                      signOut(context, user.name);
+                    },
+                  ),
+                ],
+              ),
+            ),
+            body: activeScreen,
+            floatingActionButton: currentScreen == 'home'
+                ? FabWithIcons(
+                    icons: icons1,
+                    onIconTapped: (index) {},
+                    tooltips: fabTooltips1,
+                    screen: currentScreen!,
+                  )
+                : currentScreen == 'production'
+                    ? FabWithIcons(
+                        icons: icons2,
+                        onIconTapped: (index) {},
+                        tooltips: fabTooltips2,
+                        screen: currentScreen!,
+                      )
+                    : currentScreen == 'stock'
+                        ? FloatingActionButton(
+                            tooltip: 'Add Stock',
+                            onPressed: () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => AddMaterial()));
+                            },
+                            child: const Icon(Icons.add),
+                          )
+                        : FabWithIcons(
+                            icons: icons3,
+                            onIconTapped: (index) {},
+                            tooltips: fabTooltips3,
+                            screen: currentScreen!,
+                          ),
+          );
+        } else {
+          return Scaffold(appBar: AppBar(), body: ShimmerListTile());
+        }
+      },
     );
   }
 }
@@ -355,9 +382,9 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                                               });
                                               // ignore: use_build_context_synchronously
                                               showSnackBar(
-                                                context,
-                                                'Status updated for ${item.name}: $newStatus',
-                                              );
+                                                  context,
+                                                  'Status updated for ${item.name}: $newStatus',
+                                                  Colors.green.shade400);
                                             }
                                           }
                                         },
@@ -448,9 +475,9 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                                               item.id, newStatus, 'supplier');
                                       if (isUpdated == true) {
                                         showSnackBar(
-                                          context,
-                                          'Status updated for ${item.name}: $newStatus',
-                                        );
+                                            context,
+                                            'Status updated for ${item.name}: $newStatus',
+                                            Colors.green.shade400);
                                       }
                                     }
                                   },

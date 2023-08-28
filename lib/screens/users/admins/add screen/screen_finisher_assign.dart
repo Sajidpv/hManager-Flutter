@@ -8,6 +8,7 @@ import 'package:hmanager/models/finisher_assign_model.dart';
 import 'package:hmanager/widgets/button.dart';
 import 'package:hmanager/widgets/error_visible_message.dart';
 import 'package:hmanager/widgets/shimmer_effect.dart';
+import 'package:hmanager/widgets/show_snack_bar.dart';
 import 'package:hmanager/widgets/spacer.dart';
 import 'package:hmanager/widgets/validator.dart';
 
@@ -456,7 +457,13 @@ class _AssignToFinisherState extends State<AssignToFinisher> {
         productId: proId,
         status: '',
         empId: '');
-    CallApi.assignFinisher(model);
+    final result = await CallApi.assignFinisher(model);
+    if (result == true) {
+      showSnackBar(context, 'Assigned to ${selectedEmployee!.name} Added',
+          Colors.green.shade400);
+    } else {
+      showSnackBar(context, 'Error Occured', Colors.red.shade500);
+    }
     Navigator.pop(context);
   }
 }

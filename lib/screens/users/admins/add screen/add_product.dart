@@ -3,6 +3,7 @@ import 'package:hmanager/Services/api.dart';
 
 import 'package:hmanager/models/item_add_model.dart';
 import 'package:hmanager/widgets/button.dart';
+import 'package:hmanager/widgets/show_snack_bar.dart';
 import 'package:hmanager/widgets/spacer.dart';
 import 'package:hmanager/widgets/validator.dart';
 
@@ -70,7 +71,12 @@ class AddProduct extends StatelessWidget {
       '',
       name: proName,
     );
-    CallApi.addProduct(model);
+    final result = await CallApi.addProduct(model);
+    if (result == true) {
+      showSnackBar(context, '$proName Added', Colors.green.shade400);
+    } else {
+      showSnackBar(context, 'Error Occured', Colors.red.shade500);
+    }
     nameController.clear();
     Navigator.pop(context);
   }

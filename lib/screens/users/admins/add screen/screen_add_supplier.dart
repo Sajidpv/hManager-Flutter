@@ -4,6 +4,7 @@ import 'package:hmanager/Services/api.dart';
 import 'package:hmanager/models/employee_model.dart';
 import 'package:hmanager/models/supplier_model.dart';
 import 'package:hmanager/widgets/button.dart';
+import 'package:hmanager/widgets/show_snack_bar.dart';
 import 'package:hmanager/widgets/validator.dart';
 
 import '../../../../widgets/spacer.dart';
@@ -162,7 +163,12 @@ class _AddSupplierState extends State<AddSupplier> {
     final supDesc = suppAddressController.text;
     final model = SupplierModel('',
         name: supName, address: supDesc, status: selectedStatus!);
-    CallApi.registerSupplier(model);
+    final result = await CallApi.registerSupplier(model);
+    if (result == true) {
+      showSnackBar(context, 'New Supplier Added', Colors.green.shade400);
+    } else {
+      showSnackBar(context, 'Error Occured', Colors.red.shade500);
+    }
     Navigator.pop(context);
   }
 }

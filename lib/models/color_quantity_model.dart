@@ -4,7 +4,7 @@ part 'color_quantity_model.g.dart';
 @JsonSerializable()
 class ColorQuantityModel {
   final String color;
-  double quantity;
+  final double quantity;
   final String id;
 
   ColorQuantityModel(this.color, this.quantity, this.id);

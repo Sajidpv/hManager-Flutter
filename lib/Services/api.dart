@@ -28,14 +28,14 @@ class CallApi {
           body: jsonEncode(empData));
 
       var jsonres = await jsonDecode((res.body.toString()));
-      if (res.statusCode == 200) {
-        print(jsonres);
+      if (jsonres['status'] == true) {
+        return true;
       } else {
-        print(res.body.toString());
+        return false;
       }
     } catch (e) {
       debugPrint(e.toString());
-      print(e);
+      return false;
     }
   }
 
@@ -172,14 +172,14 @@ class CallApi {
           body: jsonEncode(sData));
 
       var jsonres = await jsonDecode((res.body.toString()));
-      if (res.statusCode == 200) {
-        print(jsonres);
+      if (jsonres['status'] == true) {
+        return true;
       } else {
-        print(res.body.toString());
+        return false;
       }
     } catch (e) {
       debugPrint(e.toString());
-      print(e);
+      return false;
     }
   }
 
@@ -231,8 +231,7 @@ class CallApi {
           body: jsonEncode(pData));
 
       var jsonres = await jsonDecode((res.body.toString()));
-      if (res.statusCode == 200) {
-        print(jsonres);
+      if (jsonres['status'] == true) {
         try {
           updateMaterial(materialList: pData.items);
         } catch (e) {
@@ -241,9 +240,10 @@ class CallApi {
       } else {
         print(res.body.toString());
       }
+      return true;
     } catch (e) {
       debugPrint(e.toString());
-      print(e);
+      return false;
     }
   }
 
@@ -304,14 +304,14 @@ class CallApi {
           body: jsonEncode(mData));
 
       var jsonres = await jsonDecode((res.body.toString()));
-      if (res.statusCode == 200) {
-        print(jsonres);
+      if (jsonres['status'] == true) {
+        return true;
       } else {
-        print(res.body.toString());
+        return false;
       }
     } catch (e) {
       debugPrint(e.toString());
-      print(e);
+      return false;
     }
   }
 
@@ -441,14 +441,14 @@ class CallApi {
           body: jsonEncode(mData));
 
       var jsonres = await jsonDecode((res.body.toString()));
-      if (res.statusCode == 200) {
-        print(jsonres);
+      if (jsonres['status'] == true) {
+        return true;
       } else {
-        print(res.body.toString());
+        return false;
       }
     } catch (e) {
       debugPrint(e.toString());
-      print(e);
+      return false;
     }
   }
 
@@ -487,19 +487,19 @@ class CallApi {
           body: jsonEncode(bData));
 
       var jsonres = await jsonDecode((res.body.toString()));
-      if (res.statusCode == 200) {
-        print(jsonres);
+      if (jsonres['status'] == true) {
         try {
           updateMaterial(quantity: bData.assignedQuantity, id: bData.stockID);
         } catch (e) {
           print(e.toString());
         }
+        return true;
       } else {
-        print(res.body.toString());
+        return false;
       }
     } catch (e) {
       debugPrint(e.toString());
-      print(e);
+      return false;
     }
   }
 
@@ -576,9 +576,8 @@ class CallApi {
           body: jsonEncode(bData));
 
       var jsonres = await jsonDecode((res.body.toString()));
-      if (res.statusCode == 200) {
-        print(jsonres);
 
+      if (jsonres['status'] == true) {
         try {
           updateMaterialAdd(bData.balance, bData.materialId);
           updateStatus(bData.proAssignID, 'CutterAssign');
@@ -588,9 +587,12 @@ class CallApi {
       } else {
         print(res.body.toString());
       }
+
+      return true;
     } catch (e) {
       debugPrint(e.toString());
       print(e);
+      return false;
     }
   }
 
@@ -704,9 +706,8 @@ class CallApi {
           body: jsonEncode(bData));
 
       var jsonres = await jsonDecode((res.body.toString()));
-      print(jsonres);
 
-      if (res.statusCode == 200) {
+      if (jsonres['status'] == true) {
         try {
           var url = Uri.parse('$updateFinishCutterStatus/$id');
           await http.post(
@@ -719,12 +720,13 @@ class CallApi {
         } catch (e) {
           print(e.toString());
         }
+        return true;
       } else {
-        print(res.body.toString());
+        return false;
       }
     } catch (e) {
       debugPrint(e.toString());
-      print(e);
+      return false;
     }
   }
 
@@ -772,8 +774,7 @@ class CallApi {
           body: jsonEncode(bData));
 
       var jsonres = await jsonDecode((res.body.toString()));
-      if (res.statusCode == 200) {
-        print(jsonres);
+      if (jsonres['status'] == true) {
         try {
           updateStatus(bData.tailerAssignID, 'TailerAssign');
         } catch (e) {
@@ -782,9 +783,10 @@ class CallApi {
       } else {
         print(res.body.toString());
       }
+      return true;
     } catch (e) {
       debugPrint(e.toString());
-      print(e);
+      return false;
     }
   }
 
@@ -947,19 +949,19 @@ class CallApi {
           body: jsonEncode(bData));
 
       var jsonres = await jsonDecode((res.body.toString()));
-      if (res.statusCode == 200) {
-        print(jsonres);
+      if (jsonres['status'] == true) {
         try {
           updateStatus(bData.tailerFinishId, 'TailerFinish');
         } catch (e) {
           print(e.toString());
         }
+        return true;
       } else {
-        print(res.body.toString());
+        return false;
       }
     } catch (e) {
       debugPrint(e.toString());
-      print(e);
+      return false;
     }
   }
 
@@ -1007,9 +1009,7 @@ class CallApi {
           body: jsonEncode(bData));
 
       var jsonres = await jsonDecode((res.body.toString()));
-      if (res.statusCode == 200) {
-        print(jsonres);
-
+      if (jsonres['status'] == true) {
         try {
           updateStatus(bData.finisherAssignID, 'FinisherAssign');
         } catch (e) {
@@ -1018,9 +1018,10 @@ class CallApi {
       } else {
         print(res.body.toString());
       }
+      return true;
     } catch (e) {
       debugPrint(e.toString());
-      print(e);
+      return false;
     }
   }
 
@@ -1161,14 +1162,14 @@ class CallApi {
           body: jsonEncode(bData));
 
       var jsonres = await jsonDecode((res.body.toString()));
-      if (res.statusCode == 200) {
-        print(jsonres);
+      if (jsonres['status'] == true) {
+        return true;
       } else {
-        print(res.body.toString());
+        return false;
       }
     } catch (e) {
       debugPrint(e.toString());
-      print(e);
+      return false;
     }
   }
 

@@ -5,6 +5,7 @@ import 'package:hmanager/models/finish_model.dart';
 import 'package:hmanager/models/finisher_assign_model.dart';
 import 'package:hmanager/widgets/button.dart';
 import 'package:hmanager/widgets/select_date.dart';
+import 'package:hmanager/widgets/show_snack_bar.dart';
 import 'package:hmanager/widgets/spacer.dart';
 import 'package:hmanager/widgets/validator.dart';
 
@@ -338,7 +339,13 @@ class _FinisherFinishItemState extends State<FinisherinishItem> {
       quantity: parsedQuantity,
     );
 
-    CallApi.finishProduct(model);
+    final result = await CallApi.finishProduct(model);
+
+    if (result == true) {
+      showSnackBar(context, 'Finished Successfully', Colors.green.shade400);
+    } else {
+      showSnackBar(context, 'Error Occured', Colors.red.shade500);
+    }
   }
 
   Future<void> _selectDate(BuildContext context) async {

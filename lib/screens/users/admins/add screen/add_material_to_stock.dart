@@ -3,6 +3,7 @@ import 'package:hmanager/Services/api.dart';
 
 import 'package:hmanager/models/stock_model.dart';
 import 'package:hmanager/widgets/button.dart';
+import 'package:hmanager/widgets/show_snack_bar.dart';
 
 import 'package:hmanager/widgets/spacer.dart';
 import 'package:hmanager/widgets/validator.dart';
@@ -146,7 +147,12 @@ class AddMaterial extends StatelessWidget {
     }
     final model = StockModel('', hsn, '', name: proName, quantity: balance);
 
-    await CallApi.addMaterial(model);
+    final result = await CallApi.addMaterial(model);
+    if (result == true) {
+      showSnackBar(context, '$proName Added', Colors.green.shade400);
+    } else {
+      showSnackBar(context, 'Error Occured', Colors.red.shade500);
+    }
     Navigator.pop(context);
   }
 }

@@ -46,17 +46,29 @@ class _ProductionHomeState extends State<ProductionHome> {
               child: ListView(
                 children: <Widget>[
                   SizedBox(
-                    height: 70,
+                    height: 90,
                     child: DrawerHeader(
                       decoration: const BoxDecoration(
                         color: Colors.grey,
                       ),
-                      child: Text(
-                        user!.name,
-                        style: const TextStyle(
-                          color: Colors.black,
-                          fontSize: 24,
-                        ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            user!.name,
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 20,
+                            ),
+                          ),
+                          Text(
+                            user.email,
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 12,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ),
@@ -77,7 +89,7 @@ class _ProductionHomeState extends State<ProductionHome> {
                     leading: const Icon(Icons.logout),
                     title: const Text('Logout'),
                     onTap: () {
-                      signOut(context);
+                      signOut(context, user.name);
                     },
                   ),
                 ],
