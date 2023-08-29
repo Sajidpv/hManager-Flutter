@@ -147,83 +147,92 @@ class _StockHomeState extends State<StockHome>
                                     BorderRadius.all(Radius.circular(10)),
                                 color: Color.fromARGB(255, 255, 255, 255),
                               ),
-                              child: ExpansionTile(
-                                title: Text(
-                                  ' ${item.products[0].name}',
-                                  style: const TextStyle(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w600,
+                              child: Theme(
+                                data: Theme.of(context)
+                                    .copyWith(dividerColor: Colors.transparent),
+                                child: ExpansionTile(
+                                  title: Text(
+                                    ' ${item.products[0].name}',
+                                    style: const TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w600,
+                                    ),
                                   ),
-                                ),
-                                children: [
-                                  ListView.builder(
-                                    shrinkWrap: true,
-                                    physics:
-                                        const NeverScrollableScrollPhysics(),
-                                    itemCount: item.batches.length,
-                                    itemBuilder:
-                                        (BuildContext context, int index) {
-                                      final batch = item.batches[index];
-                                      final batchId = batch.batchId;
-                                      final alphabeticPart = batchId.replaceAll(
-                                          RegExp(r'[^A-Za-z]'), '');
-                                      final numericPart = batchId.replaceAll(
-                                          RegExp(r'[^0-9]'), '');
-                                      return ExpansionTile(
-                                        title: ListTile(
-                                          tileColor: Colors.grey[100],
-                                          leading: CircleAvatar(
-                                            radius: 25,
-                                            backgroundColor:
-                                                Colors.grey.shade400,
-                                            child: Text(
-                                              '$alphabeticPart\n$numericPart',
+                                  children: [
+                                    ListView.builder(
+                                      shrinkWrap: true,
+                                      physics:
+                                          const NeverScrollableScrollPhysics(),
+                                      itemCount: item.batches.length,
+                                      itemBuilder:
+                                          (BuildContext context, int index) {
+                                        final batch = item.batches[index];
+                                        final batchId = batch.batchId;
+                                        final alphabeticPart =
+                                            batchId.replaceAll(
+                                                RegExp(r'[^A-Za-z]'), '');
+                                        final numericPart = batchId.replaceAll(
+                                            RegExp(r'[^0-9]'), '');
+                                        return ExpansionTile(
+                                          title: ListTile(
+                                            tileColor: Colors.grey[100],
+                                            leading: CircleAvatar(
+                                              radius: 25,
+                                              backgroundColor:
+                                                  Colors.grey.shade400,
+                                              child: Text(
+                                                '$alphabeticPart\n$numericPart',
+                                                textAlign: TextAlign.center,
+                                                style: const TextStyle(
+                                                    fontSize: 10),
+                                              ),
+                                            ),
+                                            title: Text(
+                                              'Material: ${batch.material.name}',
                                               style:
-                                                  const TextStyle(fontSize: 10),
+                                                  const TextStyle(fontSize: 12),
                                             ),
                                           ),
-                                          title: Text(
-                                            'Material: ${batch.material.name}',
-                                            style:
-                                                const TextStyle(fontSize: 12),
-                                          ),
-                                        ),
-                                        children: [
-                                          ListView.builder(
-                                            shrinkWrap: true,
-                                            physics:
-                                                const NeverScrollableScrollPhysics(),
-                                            itemCount: batch.colors.length,
-                                            itemBuilder: (BuildContext context,
-                                                int index) {
-                                              final color = batch.colors[index];
-                                              return Card(
-                                                child: ListTile(
-                                                  title: Text(
-                                                    'Color: ${color.color}',
-                                                    style: const TextStyle(
-                                                        fontSize: 12),
-                                                  ),
-                                                  trailing: Text(
-                                                    color.quantity == 0
-                                                        ? 'Out of Stock'
-                                                        : 'Qty: ${color.quantity.toString()}',
-                                                    style: TextStyle(
-                                                      fontSize: 10,
-                                                      color: color.quantity == 0
-                                                          ? Colors.red
-                                                          : Colors.green,
+                                          children: [
+                                            ListView.builder(
+                                              shrinkWrap: true,
+                                              physics:
+                                                  const NeverScrollableScrollPhysics(),
+                                              itemCount: batch.colors.length,
+                                              itemBuilder:
+                                                  (BuildContext context,
+                                                      int index) {
+                                                final color =
+                                                    batch.colors[index];
+                                                return Card(
+                                                  child: ListTile(
+                                                    title: Text(
+                                                      'Color: ${color.color}',
+                                                      style: const TextStyle(
+                                                          fontSize: 12),
+                                                    ),
+                                                    trailing: Text(
+                                                      color.quantity == 0
+                                                          ? 'Out of Stock'
+                                                          : 'Qty: ${color.quantity.toString()}',
+                                                      style: TextStyle(
+                                                        fontSize: 10,
+                                                        color:
+                                                            color.quantity == 0
+                                                                ? Colors.red
+                                                                : Colors.green,
+                                                      ),
                                                     ),
                                                   ),
-                                                ),
-                                              );
-                                            },
-                                          ),
-                                        ],
-                                      );
-                                    },
-                                  ),
-                                ],
+                                                );
+                                              },
+                                            ),
+                                          ],
+                                        );
+                                      },
+                                    ),
+                                  ],
+                                ),
                               ),
                             ),
                           );
