@@ -28,7 +28,6 @@ CutterFinishingModel _$CutterFinishingModelFromJson(
       layerCount: (json['layerCount'] as num).toDouble(),
       meterLayer: (json['meterLayer'] as num).toDouble(),
       pieceLayer: (json['pieceLayer'] as num).toDouble(),
-      status: json['status'] as String,
     );
 
 Map<String, dynamic> _$CutterFinishingModelToJson(
@@ -50,6 +49,5 @@ Map<String, dynamic> _$CutterFinishingModelToJson(
       'balance': instance.balance,
       'damage': instance.damage,
       'wastage': instance.wastage,
-      'status': instance.status,
       'id': instance.id,
     };

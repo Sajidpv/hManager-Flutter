@@ -75,10 +75,13 @@ class _SplashState extends State<Splash> with SingleTickerProviderStateMixin {
                       color: Theme.of(context).colorScheme.primary,
                     ),
                   ),
+                  const SizedBox(
+                    height: 5,
+                  ),
                   const Text(
                     'Loading..',
                     style: TextStyle(
-                      fontSize: 10,
+                      fontSize: 15,
                       color: Color.fromARGB(255, 255, 255, 255),
                     ),
                   ),
@@ -90,6 +93,12 @@ class _SplashState extends State<Splash> with SingleTickerProviderStateMixin {
 }
 
 Future<void> pageNavigator(Widget page, BuildContext context) async {
+  await Navigator.of(context).push(MaterialPageRoute(
+    builder: (ctx) => page,
+  ));
+}
+
+Future<void> pageReplacedNavigator(Widget page, BuildContext context) async {
   await Navigator.of(context).pushReplacement(MaterialPageRoute(
     builder: (ctx) => page,
   ));
@@ -99,47 +108,47 @@ void navigateToHomeScreen(role, userId, BuildContext context) async {
   const Splash();
   switch (role) {
     case 'Admin':
-      pageNavigator(
+      pageReplacedNavigator(
           AdminHome(
             empId: userId,
           ),
           context);
       break;
     case 'Production':
-      pageNavigator(
+      pageReplacedNavigator(
           ProductionHome(
             empID: userId,
           ),
           context);
       break;
     // case 'Purchaser':
-    //   pageNavigator(PurchaseHome(), context);
+    //   pageReplacedNavigator(PurchaseHome(), context);
     //   break;
     // case 'Sales':
-    //   pageNavigator(SalesHome(), context);
+    //   pageReplacedNavigator(SalesHome(), context);
     //   break;
     // case 'Accountant':
-    //   pageNavigator(AccountsHome(), context);
+    //   pageReplacedNavigator(AccountsHome(), context);
     //   break;
     case 'Tailer':
-      pageNavigator(
+      pageReplacedNavigator(
           TailerHome(
             empID: userId,
           ),
           context);
       break;
     case 'Cutter':
-      pageNavigator(CutterHome(empID: userId), context);
+      pageReplacedNavigator(CutterHome(empID: userId), context);
       break;
     case 'Finisher':
-      pageNavigator(
+      pageReplacedNavigator(
           FinisherHome(
             empID: userId,
           ),
           context);
       break;
     default:
-      pageNavigator(LoginPage(), context);
+      pageReplacedNavigator(LoginPage(), context);
       break;
   }
 }

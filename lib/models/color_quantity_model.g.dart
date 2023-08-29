@@ -7,12 +7,16 @@ part of 'color_quantity_model.dart';
 // **************************************************************************
 
 ColorQuantityModel _$ColorQuantityModelFromJson(Map<String, dynamic> json) =>
-    ColorQuantityModel(json['color'] as String,
-        (json['quantity'] as num).toDouble(), json['id'] as String);
+    ColorQuantityModel(
+        json['color'] as String,
+        (json['quantity'] as num).toDouble(),
+        json['colorId'] as String,
+        json['status'] as String);
 
 Map<String, dynamic> _$ColorQuantityModelToJson(ColorQuantityModel instance) =>
     <String, dynamic>{
       'color': instance.color,
       'quantity': instance.quantity,
-      'id': instance.id
+      'colorId': instance.colorId,
+      'status': instance.status
     };

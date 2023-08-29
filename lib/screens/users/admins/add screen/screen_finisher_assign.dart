@@ -450,7 +450,7 @@ class _AssignToFinisherState extends State<AssignToFinisher> {
         date: selectedDate,
         batchId: selectedBatch!.batchId,
         color: selectedColorItem!.color,
-        tailerFinishId: selectedColorItem!.id,
+        tailerFinishId: selectedColorItem!.colorId,
         assignedQuantity: parsedQuantity,
         materialId: selectedBatch!.material.id,
         employId: selectedEmployee!.id,

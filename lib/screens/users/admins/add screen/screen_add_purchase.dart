@@ -43,8 +43,7 @@ class _AddPurchaseState extends State<AddPurchase> {
   StockModel? selectedMaterial;
   @override
   void initState() {
-    material = CallApi.getMaterial();
-    supplier = CallApi.getsupplier();
+    refreshMaterials();
     super.initState();
   }
 
@@ -55,6 +54,13 @@ class _AddPurchaseState extends State<AddPurchase> {
     quantController.dispose();
     amountController.dispose();
     super.dispose();
+  }
+
+  Future<void> refreshMaterials() async {
+    setState(() {
+      material = CallApi.getMaterial();
+      supplier = CallApi.getsupplier();
+    });
   }
 
   @override

@@ -5,9 +5,10 @@ part 'color_quantity_model.g.dart';
 class ColorQuantityModel {
   final String color;
   final double quantity;
-  final String id;
+  final String colorId;
+  final String status;
 
-  ColorQuantityModel(this.color, this.quantity, this.id);
+  ColorQuantityModel(this.color, this.quantity, this.colorId, this.status);
   factory ColorQuantityModel.fromJson(Map<String, dynamic> json) =>
       _$ColorQuantityModelFromJson(json);
   Map<String, dynamic> toJson() => _$ColorQuantityModelToJson(this);

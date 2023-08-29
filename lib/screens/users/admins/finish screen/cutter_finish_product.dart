@@ -85,6 +85,7 @@ class _CutterFinishItems extends State<CutterFinishItems> {
         title: Text(title),
         actions: [
           IconButton(
+              tooltip: 'Add New Color',
               onPressed: () {
                 pageNavigator(AddColors(), context);
               },
@@ -695,8 +696,8 @@ class _CutterFinishItems extends State<CutterFinishItems> {
   void addQuantity() {
     final quantity = double.tryParse(quantityController.text);
     setState(() {
-      colorQuantity
-          .add(ColorQuantityModel(selectedColor!.color, quantity!, ''));
+      colorQuantity.add(
+          ColorQuantityModel(selectedColor!.color, quantity!, '', 'Pending'));
       totalPiece -= quantity;
       quantityController.clear();
       selectedColor = null;
@@ -781,9 +782,7 @@ class _CutterFinishItems extends State<CutterFinishItems> {
       '',
       '',
       '',
-      status: '',
     );
-
     final result = await CallApi.finishCutter(model);
 
     if (result == true) {

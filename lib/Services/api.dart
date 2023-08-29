@@ -584,14 +584,11 @@ class CallApi {
         } catch (e) {
           print(e.toString());
         }
+        return true;
       } else {
-        print(res.body.toString());
+        return false;
       }
-
-      return true;
     } catch (e) {
-      debugPrint(e.toString());
-      print(e);
       return false;
     }
   }
@@ -608,7 +605,10 @@ class CallApi {
           List<ColorQuantityModel> quantityList =
               (value['quantity'] as List<dynamic>).map((quantity) {
             return ColorQuantityModel(
-                quantity['color'], quantity['quantity'].toDouble(), '');
+                quantity['color'],
+                quantity['quantity'].toDouble(),
+                quantity['_id'],
+                quantity['status']);
           }).toList();
 
           return CutterFinishingModel(
@@ -629,7 +629,6 @@ class CallApi {
             layerCount: value['layerCount'].toDouble(),
             meterLayer: value['meterCount'].toDouble(),
             pieceLayer: value['pieceCount'].toDouble(),
-            status: value['status'],
           );
         }).toList();
         return list;
@@ -654,8 +653,11 @@ class CallApi {
             (value['batches'] as List<dynamic>).map((item) {
           List<ColorQuantityModel> colors =
               (item['colors'] as List<dynamic>).map((colorItem) {
-            return ColorQuantityModel(colorItem['quantity']['color'],
-                colorItem['quantity']['quantity'].toDouble(), '');
+            return ColorQuantityModel(
+                colorItem['quantity']['color'],
+                colorItem['quantity']['quantity'].toDouble(),
+                colorItem['quantity']['_id'],
+                colorItem['quantity']['status']);
           }).toList();
 
           MaterialModel material = MaterialModel(
@@ -898,7 +900,7 @@ class CallApi {
           List<ColorQuantityModel> colors =
               (item['colors'] as List<dynamic>).map((colorItem) {
             return ColorQuantityModel(colorItem['color'],
-                colorItem['quantity'].toDouble(), colorItem['id']);
+                colorItem['quantity'].toDouble(), colorItem['id'], '');
           }).toList();
 
           MaterialModel material = MaterialModel(
@@ -1002,7 +1004,7 @@ class CallApi {
 
   //Finishing
   static finishProduct(FinishModel bData) async {
-    var url = Uri.parse(finisherProduct);
+    var url = Uri.parse(getFinishing);
     try {
       final res = await http.post(url,
           headers: {"Content-Type": "application/json"},
@@ -1111,7 +1113,7 @@ class CallApi {
           List<ColorQuantityModel> colors =
               (item['colors'] as List<dynamic>).map((colorItem) {
             return ColorQuantityModel(
-                colorItem['color'], colorItem['quantity'].toDouble(), '');
+                colorItem['color'], colorItem['quantity'].toDouble(), '', '');
           }).toList();
 
           MaterialModel material = MaterialModel(

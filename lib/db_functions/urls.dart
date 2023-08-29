@@ -1,4 +1,4 @@
-const String baseUrl = "http://13.126.104.188";
+const String baseUrl = "http://13.232.27.204";
 
 const String login = '$baseUrl/login';
 const String registration = "$baseUrl/registration";
@@ -41,7 +41,7 @@ const String updateAssignFinisherStatus =
 
 const String finisherAssign = '$baseUrl/add_finisher_assign';
 const String assignFinisherGet = '$baseUrl/get_finisher_assign';
-const String finisherProduct = '$baseUrl/add_finisher_finished';
+
 const String getFinishing = '$baseUrl/get_finisher_finished';
 const String colorAdd = '$baseUrl/add_color';
 const String colorGet = '$baseUrl/get_colors';
