@@ -154,7 +154,7 @@ class _LoginPageState extends State<LoginPage> {
                     Visibility(
                       visible: !isMatched,
                       child: Padding(
-                        padding: const EdgeInsets.all(10.0),
+                        padding: const EdgeInsets.all(1.0),
                         child: Text(
                           errorText,
                           style: TextStyle(
@@ -218,17 +218,11 @@ class _LoginPageState extends State<LoginPage> {
     final String userStatus = jwtDecodedToken['status'];
     final String userId = jwtDecodedToken['_id'];
     if (userStatus == 'Active') {
-      if (userStatus == 'Inactive') {
-        setState(() {
-          isMatched = false;
-          errorText = 'The user is Inactive';
-        });
-      } else {
-        navigateToHomeScreen(role, userId, cxt);
-        showSnackBar(context, 'User Already Logged In', Colors.green.shade400);
-      }
+      navigateToHomeScreen(role, userId, cxt);
+      showSnackBar(context, 'User Already Logged In', Colors.green.shade400);
     } else {
-      showSnackBar(context, 'Something went wrong', Colors.red.shade400);
+      showSnackBar(context, 'The user is Inactive, Contact Your admin.',
+          Colors.red.shade400);
     }
   }
 
@@ -245,24 +239,33 @@ class _LoginPageState extends State<LoginPage> {
           headers: {'Content-Type': 'application/json'},
           body: jsonEncode(lData));
       var jsonRes = jsonDecode(response.body);
-      var myToken = jsonRes['token'];
-      Map<String, dynamic> jwtDecodedToken = JwtDecoder.decode(myToken);
-      final String role = jwtDecodedToken['type'];
-      final String userStatus = jwtDecodedToken['status'];
-      final String userId = jwtDecodedToken['_id'];
-      if (userStatus == 'Active') {
-        pref.setString('token', myToken);
-        if (userStatus == 'Inactive') {
+      if (jsonRes['status'] == true) {
+        var myToken = jsonRes['token'];
+        Map<String, dynamic> jwtDecodedToken = JwtDecoder.decode(myToken);
+        final String role = jwtDecodedToken['type'];
+        final String userStatus = jwtDecodedToken['status'];
+        final String userId = jwtDecodedToken['_id'];
+        if (userStatus == 'Active') {
           setState(() {
-            isMatched = false;
-            errorText = 'The user is Inactive';
+            isMatched = true;
           });
-        } else {
+
+          pref.setString('token', myToken);
+
           navigateToHomeScreen(role, userId, ctx);
           showSnackBar(context, 'Logged In Succeful', Colors.green.shade400);
+        } else if (userStatus == 'Inactive') {
+          setState(() {
+            isMatched = false;
+            errorText = 'The user is Inactive, Contact Your admin.';
+          });
         }
       } else {
-        showSnackBar(context, 'Something went wrong', Colors.red.shade400);
+        setState(() {
+          isMatched = true;
+        });
+        showSnackBar(
+            context, 'Invalid Username or Password', Colors.red.shade400);
       }
     }
   }

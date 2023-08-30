@@ -44,6 +44,13 @@ class _PurchaseHomeState extends State<PurchaseHome>
     });
   }
 
+  Future<void> _refreshData() async {
+    setState(() {
+      // Reload data here
+      purchases = callApi.getPurchaseStream();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -75,78 +82,83 @@ class _PurchaseHomeState extends State<PurchaseHome>
                   const Center(
                     child: Text('No record to show'),
                   ),
-                  StreamBuilder(
-                    stream: purchases,
-                    builder: (context,
-                        AsyncSnapshot<List<ProductMaterialModel>> snapshot) {
-                      if (snapshot.hasData && snapshot.data!.isNotEmpty) {
-                        return ListView.builder(
-                          itemCount: snapshot.data?.length,
-                          itemBuilder: (BuildContext context, int index) {
-                            final item = snapshot.data![index];
+                  RefreshIndicator(
+                    onRefresh: _refreshData,
+                    child: StreamBuilder(
+                      stream: purchases,
+                      builder: (context,
+                          AsyncSnapshot<List<ProductMaterialModel>> snapshot) {
+                        if (snapshot.hasData && snapshot.data!.isNotEmpty) {
+                          return ListView.builder(
+                            itemCount: snapshot.data?.length,
+                            itemBuilder: (BuildContext context, int index) {
+                              final item = snapshot.data![index];
 
-                            List<String> dateParts = formatDateTime(item.date);
-                            return Padding(
-                              padding: const EdgeInsets.only(
-                                  top: 10, left: 20, right: 20),
-                              child: GestureDetector(
-                                onTap: () {
-                                  showDialog(
-                                    context: context,
-                                    builder: (BuildContext context) {
-                                      return PurchaseDialog(
-                                        dateParts: dateParts,
-                                        supplierName: item.supplier.toString(),
-                                        invoice: item.invoice,
-                                        items: item.items,
-                                        totalAmount:
-                                            item.totalAmount.toDouble(),
-                                      );
-                                    },
-                                  );
-                                },
-                                child: Container(
-                                  decoration: const BoxDecoration(
-                                    borderRadius:
-                                        BorderRadius.all(Radius.circular(20)),
-                                    color: Color.fromARGB(255, 255, 255, 255),
-                                  ),
-                                  child: ListTile(
-                                    leading: CircleAvatar(
-                                      radius: 25,
-                                      backgroundColor: Colors.grey.shade300,
-                                      child: Text(
-                                        '${dateParts[1]}\n${dateParts[0]}',
-                                        textAlign: TextAlign.center,
+                              List<String> dateParts =
+                                  formatDateTime(item.date);
+                              return Padding(
+                                padding: const EdgeInsets.only(
+                                    top: 10, left: 20, right: 20),
+                                child: GestureDetector(
+                                  onTap: () {
+                                    showDialog(
+                                      context: context,
+                                      builder: (BuildContext context) {
+                                        return PurchaseDialog(
+                                          dateParts: dateParts,
+                                          supplierName:
+                                              item.supplier.toString(),
+                                          invoice: item.invoice,
+                                          items: item.items,
+                                          totalAmount:
+                                              item.totalAmount.toDouble(),
+                                        );
+                                      },
+                                    );
+                                  },
+                                  child: Container(
+                                    decoration: const BoxDecoration(
+                                      borderRadius:
+                                          BorderRadius.all(Radius.circular(20)),
+                                      color: Color.fromARGB(255, 255, 255, 255),
+                                    ),
+                                    child: ListTile(
+                                      leading: CircleAvatar(
+                                        radius: 25,
+                                        backgroundColor: Colors.grey.shade300,
+                                        child: Text(
+                                          '${dateParts[1]}\n${dateParts[0]}',
+                                          textAlign: TextAlign.center,
+                                          style: const TextStyle(fontSize: 10),
+                                        ),
+                                      ),
+                                      title: Text(
+                                        item.supplier.toString(),
+                                        style: const TextStyle(fontSize: 12),
+                                      ),
+                                      subtitle: Text(
+                                        item.invoice,
                                         style: const TextStyle(fontSize: 10),
                                       ),
-                                    ),
-                                    title: Text(
-                                      item.supplier.toString(),
-                                      style: const TextStyle(fontSize: 12),
-                                    ),
-                                    subtitle: Text(
-                                      item.invoice,
-                                      style: const TextStyle(fontSize: 10),
-                                    ),
-                                    trailing: Text(
-                                      'Amount: ${item.totalAmount}',
-                                      style: const TextStyle(fontSize: 12),
+                                      trailing: Text(
+                                        'Amount: ${item.totalAmount}',
+                                        style: const TextStyle(fontSize: 12),
+                                      ),
                                     ),
                                   ),
                                 ),
-                              ),
-                            );
-                          },
-                        );
-                      } else if (snapshot.hasData && snapshot.data!.isEmpty) {
-                        return const NoDataScreen();
-                      } else if (snapshot.hasError) {
-                        return Text('Error: ${snapshot.error}');
-                      } else {
-                        return const ShimmerListTile();
-                      }
-                    },
+                              );
+                            },
+                          );
+                        } else if (snapshot.hasData && snapshot.data!.isEmpty) {
+                          return const NoDataScreen();
+                        } else if (snapshot.hasError) {
+                          return Text('Error: ${snapshot.error}');
+                        } else {
+                          return const ShimmerListTile();
+                        }
+                      },
+                    ),
                   ),
 
                   // second tab bar view widget

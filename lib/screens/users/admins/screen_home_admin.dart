@@ -269,18 +269,21 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
   void initState() {
     _tabController = TabController(length: 3, vsync: this);
     super.initState();
-    _getDatas();
-  }
-
-  void _getDatas() {
-    users = CallApi.getEmployee();
-    suppliers = CallApi.getsupplier();
+    _refreshData();
   }
 
   @override
   void dispose() {
     super.dispose();
     _tabController.dispose();
+  }
+
+  Future<void> _refreshData() async {
+    setState(() {
+      // Reload data here
+      users = CallApi.getEmployee();
+      suppliers = CallApi.getsupplier();
+    });
   }
 
   @override
@@ -306,186 +309,100 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
 
               //View employees
 
-              FutureBuilder(
-                future: users,
-                builder: (context, AsyncSnapshot snapshot) {
-                  if (snapshot.hasData && snapshot.data!.isNotEmpty) {
-                    final List<EmployeeModel> employees = snapshot.data!;
-                    return ListView.builder(
-                      itemCount: employees.length,
-                      itemBuilder: (BuildContext context, int index) {
-                        final item = employees[index];
-                        final isAdmin = item.type == UserType.Admin;
-                        if (!isAdmin) {
-                          return Padding(
-                            padding: const EdgeInsets.only(
-                                bottom: 10, left: 20, right: 20),
-                            child: Container(
-                              decoration: const BoxDecoration(
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(20)),
-                                color: Color.fromARGB(255, 255, 255, 255),
-                              ),
-                              // child: Slidable(
-                              //   key: const ValueKey(0),
-                              //   endActionPane: ActionPane(
-                              //       motion: const ScrollMotion(),
-                              //       children: [
-                              //         SlidableAction(
-                              //           backgroundColor: const Color(0xFFFE4A49),
-                              //           foregroundColor: Colors.white,
-                              //           icon: Icons.delete,
-                              //           label: "Delete",
-                              //           onPressed: (context) {
-                              //             showDeleteConfirmationDialog(
-                              //                 context, item, () {
-                              //               setState(() {
-                              //                 employees.removeAt(index);
-                              //               });
-                              //             });
-                              //           },
-                              //         )
-                              //       ]),
-                              child: ListTile(
-                                leading: CircleAvatar(
-                                  radius: 25,
-                                  backgroundColor: Colors.grey.shade300,
-                                  child: Text(
-                                    item.empID.toString(), // Convert to string
-                                    style: const TextStyle(fontSize: 8),
-                                  ),
-                                ),
-                                title: Text(
-                                  item.name,
-                                  style: const TextStyle(fontSize: 12),
-                                ),
-                                subtitle: Text(
-                                  item.type.name,
-                                  style: const TextStyle(fontSize: 10),
-                                ),
-                                trailing: !isAdmin
-                                    ? buildStatusDropdown(
-                                        item.status,
-                                        (Status? newValue) async {
-                                          if (newValue != null) {
-                                            final newStatus = newValue
-                                                .toString()
-                                                .split('.')
-                                                .last;
-
-                                            isUpdated = await CallApi
-                                                .updateEmployeeStatus(
-                                                    item.id, newStatus, 'user');
-                                            if (isUpdated == true) {
-                                              setState(() {
-                                                isReload = true;
-                                              });
-                                              // ignore: use_build_context_synchronously
-                                              showSnackBar(
-                                                  context,
-                                                  'Status updated for ${item.name}: $newStatus',
-                                                  Colors.green.shade400);
-                                            }
-                                          }
-                                        },
-                                      )
-                                    : null,
-                              ),
-                            ),
-                            // ),
-                          );
-                        } else {
-                          return Container();
-                        }
-                      },
-                    );
-                  } else if (snapshot.hasData && snapshot.data!.isEmpty) {
-                    return const NoDataScreen();
-                  } else if (snapshot.hasError) {
-                    return Text('Error: ${snapshot.error}');
-                  } else {
-                    return const ShimmerListTile();
-                  }
-                },
-              ),
-
-              //View Suppliers
-
-              FutureBuilder(
-                  future: suppliers,
+              RefreshIndicator(
+                onRefresh: _refreshData,
+                child: FutureBuilder(
+                  future: users,
                   builder: (context, AsyncSnapshot snapshot) {
                     if (snapshot.hasData && snapshot.data!.isNotEmpty) {
-                      final List<SupplierModel> supplier = snapshot.data!;
+                      final List<EmployeeModel> employees = snapshot.data!;
                       return ListView.builder(
-                        itemCount: supplier.length,
+                        itemCount: employees.length,
                         itemBuilder: (BuildContext context, int index) {
-                          final item = supplier[index];
-                          return Padding(
-                            padding: const EdgeInsets.only(
-                                bottom: 10, left: 20, right: 20),
-                            child: Container(
-                              decoration: const BoxDecoration(
+                          final item = employees[index];
+                          final isAdmin = item.type == UserType.Admin;
+                          if (!isAdmin) {
+                            return Padding(
+                              padding: const EdgeInsets.only(
+                                  bottom: 10, left: 20, right: 20),
+                              child: Container(
+                                decoration: const BoxDecoration(
                                   borderRadius:
                                       BorderRadius.all(Radius.circular(20)),
-                                  color: Color.fromARGB(255, 255, 255, 255)),
-                              // child: Slidable(
-                              //   key: const ValueKey(0),
-                              //   endActionPane: ActionPane(
-                              //       motion: const ScrollMotion(),
-                              //       children: [
-                              //         SlidableAction(
-                              //             backgroundColor:
-                              //                 const Color(0xFFFE4A49),
-                              //             foregroundColor: Colors.white,
-                              //             icon: Icons.delete,
-                              //             label: "Delete",
-                              //             onPressed: (BuildContext context) {
-                              //               showDeleteConfirmationDialog(
-                              //                   context, item, () {
-                              //                 setState(() {
-                              //                   supplier.removeAt(index);
-                              //                 });
-                              //               });
-                              //             })
-                              //       ]),
-                              child: ListTile(
-                                leading: CircleAvatar(
-                                  radius: 25,
-                                  backgroundColor: Colors.grey.shade300,
-                                  child: const Text(
-                                    'S',
-                                    style: TextStyle(fontSize: 12),
+                                  color: Color.fromARGB(255, 255, 255, 255),
+                                ),
+                                // child: Slidable(
+                                //   key: const ValueKey(0),
+                                //   endActionPane: ActionPane(
+                                //       motion: const ScrollMotion(),
+                                //       children: [
+                                //         SlidableAction(
+                                //           backgroundColor: const Color(0xFFFE4A49),
+                                //           foregroundColor: Colors.white,
+                                //           icon: Icons.delete,
+                                //           label: "Delete",
+                                //           onPressed: (context) {
+                                //             showDeleteConfirmationDialog(
+                                //                 context, item, () {
+                                //               setState(() {
+                                //                 employees.removeAt(index);
+                                //               });
+                                //             });
+                                //           },
+                                //         )
+                                //       ]),
+                                child: ListTile(
+                                  leading: CircleAvatar(
+                                    radius: 25,
+                                    backgroundColor: Colors.grey.shade300,
+                                    child: Text(
+                                      item.empID
+                                          .toString(), // Convert to string
+                                      style: const TextStyle(fontSize: 8),
+                                    ),
                                   ),
-                                ),
-                                title: Text(item.name,
-                                    style: const TextStyle(fontSize: 12)),
-                                subtitle: Text(
-                                  item.address,
-                                  style: const TextStyle(fontSize: 12),
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                                trailing: buildStatusDropdown(
-                                  item.status,
-                                  (Status? newValue) async {
-                                    if (newValue != null) {
-                                      final newStatus =
-                                          newValue.toString().split('.').last;
-                                      isUpdated =
-                                          await CallApi.updateEmployeeStatus(
-                                              item.id, newStatus, 'supplier');
-                                      if (isUpdated == true) {
-                                        showSnackBar(
-                                            context,
-                                            'Status updated for ${item.name}: $newStatus',
-                                            Colors.green.shade400);
-                                      }
-                                    }
-                                  },
+                                  title: Text(
+                                    item.name,
+                                    style: const TextStyle(fontSize: 12),
+                                  ),
+                                  subtitle: Text(
+                                    item.type.name,
+                                    style: const TextStyle(fontSize: 10),
+                                  ),
+                                  trailing: !isAdmin
+                                      ? buildStatusDropdown(
+                                          item.status,
+                                          (Status? newValue) async {
+                                            if (newValue != null) {
+                                              final newStatus = newValue
+                                                  .toString()
+                                                  .split('.')
+                                                  .last;
+
+                                              isUpdated = await CallApi
+                                                  .updateEmployeeStatus(item.id,
+                                                      newStatus, 'user');
+                                              if (isUpdated == true) {
+                                                setState(() {
+                                                  isReload = true;
+                                                });
+                                                // ignore: use_build_context_synchronously
+                                                showSnackBar(
+                                                    context,
+                                                    'Status updated for ${item.name}: $newStatus',
+                                                    Colors.green.shade400);
+                                              }
+                                            }
+                                          },
+                                        )
+                                      : null,
                                 ),
                               ),
-                            ),
-                            //),
-                          );
+                              // ),
+                            );
+                          } else {
+                            return Container();
+                          }
                         },
                       );
                     } else if (snapshot.hasData && snapshot.data!.isEmpty) {
@@ -495,7 +412,100 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                     } else {
                       return const ShimmerListTile();
                     }
-                  }),
+                  },
+                ),
+              ),
+
+              //View Suppliers
+
+              RefreshIndicator(
+                onRefresh: _refreshData,
+                child: FutureBuilder(
+                    future: suppliers,
+                    builder: (context, AsyncSnapshot snapshot) {
+                      if (snapshot.hasData && snapshot.data!.isNotEmpty) {
+                        final List<SupplierModel> supplier = snapshot.data!;
+                        return ListView.builder(
+                          itemCount: supplier.length,
+                          itemBuilder: (BuildContext context, int index) {
+                            final item = supplier[index];
+                            return Padding(
+                              padding: const EdgeInsets.only(
+                                  bottom: 10, left: 20, right: 20),
+                              child: Container(
+                                decoration: const BoxDecoration(
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(20)),
+                                    color: Color.fromARGB(255, 255, 255, 255)),
+                                // child: Slidable(
+                                //   key: const ValueKey(0),
+                                //   endActionPane: ActionPane(
+                                //       motion: const ScrollMotion(),
+                                //       children: [
+                                //         SlidableAction(
+                                //             backgroundColor:
+                                //                 const Color(0xFFFE4A49),
+                                //             foregroundColor: Colors.white,
+                                //             icon: Icons.delete,
+                                //             label: "Delete",
+                                //             onPressed: (BuildContext context) {
+                                //               showDeleteConfirmationDialog(
+                                //                   context, item, () {
+                                //                 setState(() {
+                                //                   supplier.removeAt(index);
+                                //                 });
+                                //               });
+                                //             })
+                                //       ]),
+                                child: ListTile(
+                                  leading: CircleAvatar(
+                                    radius: 25,
+                                    backgroundColor: Colors.grey.shade300,
+                                    child: const Text(
+                                      'S',
+                                      style: TextStyle(fontSize: 12),
+                                    ),
+                                  ),
+                                  title: Text(item.name,
+                                      style: const TextStyle(fontSize: 12)),
+                                  subtitle: Text(
+                                    item.address,
+                                    style: const TextStyle(fontSize: 12),
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                  trailing: buildStatusDropdown(
+                                    item.status,
+                                    (Status? newValue) async {
+                                      if (newValue != null) {
+                                        final newStatus =
+                                            newValue.toString().split('.').last;
+                                        isUpdated =
+                                            await CallApi.updateEmployeeStatus(
+                                                item.id, newStatus, 'supplier');
+                                        if (isUpdated == true) {
+                                          showSnackBar(
+                                              context,
+                                              'Status updated for ${item.name}: $newStatus',
+                                              Colors.green.shade400);
+                                        }
+                                      }
+                                    },
+                                  ),
+                                ),
+                              ),
+                              //),
+                            );
+                          },
+                        );
+                      } else if (snapshot.hasData && snapshot.data!.isEmpty) {
+                        return const NoDataScreen();
+                      } else if (snapshot.hasError) {
+                        return Text('Error: ${snapshot.error}');
+                      } else {
+                        return const ShimmerListTile();
+                      }
+                    }),
+              ),
             ],
           ),
         ),

@@ -41,7 +41,7 @@ const String updateAssignFinisherStatus =
 
 const String finisherAssign = '$baseUrl/add_finisher_assign';
 const String assignFinisherGet = '$baseUrl/get_finisher_assign';
-
+const String addFinishing = '$baseUrl/add_finisher_finished';
 const String getFinishing = '$baseUrl/get_finisher_finished';
 const String colorAdd = '$baseUrl/add_color';
 const String colorGet = '$baseUrl/get_colors';

@@ -238,7 +238,11 @@ class _AssignItemsState extends State<AssignItems> {
                                       ConnectionState.done) {
                                     if (snapshot.hasData) {
                                       final List<StockModel> stockList =
-                                          snapshot.data!;
+                                          snapshot.data!
+                                              .where(
+                                                  (item) => item.quantity != 0)
+                                              .toList();
+
                                       return DropdownButtonFormField<
                                           StockModel>(
                                         decoration: const InputDecoration(

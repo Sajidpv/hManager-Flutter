@@ -223,7 +223,7 @@ class _FinisherFinishItemState extends State<FinisherinishItem> {
                                       total();
                                     },
                                     validator: (value) => damageValidator(
-                                        value, quantity!, availableQuantiy)),
+                                        value, quantity, availableQuantiy)),
                               ],
                             ),
                           ),

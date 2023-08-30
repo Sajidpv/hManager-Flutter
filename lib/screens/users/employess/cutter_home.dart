@@ -122,28 +122,33 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
   late TabController _tabController;
-  //FirestoreStreams streamProvider = FirestoreStreams();
   Stream<List<CutterFinishingModel>>? productStream;
+  Future<List<CutterAssignModel>>? cutterAssItemStream;
 
   @override
   void initState() {
-    //productStream = streamProvider.getCutterFinishStream(widget.empID.empID);
-    _tabController = TabController(length: 3, vsync: this);
     super.initState();
+    _refreshData();
+    _tabController = TabController(length: 3, vsync: this);
   }
 
   @override
   void dispose() {
-    super.dispose();
     _tabController.dispose();
+    super.dispose();
   }
 
   final callApi = CallApi();
+
+  Future<void> _refreshData() async {
+    setState(() {
+      // Reload data here
+      cutterAssItemStream = callApi.getAssignCutter();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    Future<List<CutterAssignModel>>? cutterAssItemStream =
-        callApi.getAssignCutter();
-
     return Column(
       children: [
         ReusableTabBar(tabs: const [
@@ -167,103 +172,36 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
               //   empId: widget.empID,
               //   isAdmin: false,
               // ),
-              FutureBuilder(
-                future: cutterAssItemStream,
-                builder:
-                    (context, AsyncSnapshot<List<CutterAssignModel>> snapshot) {
-                  if (snapshot.hasData) {
-                    final filteredData = snapshot.data!
-                        .where((item) =>
-                            widget.empID == item.employID &&
-                            item.status != 'Finished')
-                        .toList();
+              RefreshIndicator(
+                onRefresh: _refreshData,
+                child: FutureBuilder(
+                  future: cutterAssItemStream,
+                  builder: (context,
+                      AsyncSnapshot<List<CutterAssignModel>> snapshot) {
+                    if (snapshot.hasData) {
+                      final filteredData = snapshot.data!
+                          .where((item) =>
+                              widget.empID == item.employID &&
+                              item.status != 'Finished')
+                          .toList();
 
-                    if (filteredData.isNotEmpty) {
-                      return ListView.builder(
-                        itemCount: filteredData.length,
-                        itemBuilder: (BuildContext context, int index) {
-                          final item = filteredData[index];
+                      if (filteredData.isNotEmpty) {
+                        return ListView.builder(
+                          itemCount: filteredData.length,
+                          itemBuilder: (BuildContext context, int index) {
+                            final item = filteredData[index];
 
-                          List<String> dateParts = formatDateTime(item.date);
+                            List<String> dateParts = formatDateTime(item.date);
 
-                          return Padding(
-                            padding: const EdgeInsets.all(10),
-                            child: Container(
-                              decoration: const BoxDecoration(
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(20)),
-                                color: Color.fromARGB(255, 255, 255, 255),
-                              ),
-                              child: ListTile(
-                                leading: CircleAvatar(
-                                  radius: 20,
-                                  backgroundColor: Colors.grey.shade300,
-                                  child: Text(
-                                    '${dateParts[1]}\n${dateParts[0]}',
-                                    textAlign: TextAlign.center,
-                                    style: const TextStyle(fontSize: 10),
-                                  ),
+                            return Padding(
+                              padding: const EdgeInsets.all(10),
+                              child: Container(
+                                decoration: const BoxDecoration(
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(20)),
+                                  color: Color.fromARGB(255, 255, 255, 255),
                                 ),
-                                title: Text(
-                                  '${item.material} - ${item.product}',
-                                  style: const TextStyle(fontSize: 12),
-                                ),
-                                subtitle: Text(
-                                  'Qty: ${item.assignedQuantity}'.toString(),
-                                  style: const TextStyle(fontSize: 10),
-                                ),
-                                trailing: TextButton(
-                                  onPressed: () {
-                                    pageNavigator(
-                                      CutterFinishItems(emp: item),
-                                      context,
-                                    );
-                                  },
-                                  child: const Text('Add to Finish'),
-                                ),
-                              ),
-                            ),
-                          );
-                        },
-                      );
-                    } else {
-                      return const NoDataScreen();
-                    }
-                  } else if (snapshot.hasError) {
-                    return Text('Error: ${snapshot.error}');
-                  } else {
-                    return const ShimmerListTile();
-                  }
-                },
-              ),
-              FutureBuilder(
-                future: cutterAssItemStream,
-                builder:
-                    (context, AsyncSnapshot<List<CutterAssignModel>> snapshot) {
-                  if (snapshot.hasData) {
-                    final filteredData = snapshot.data!
-                        .where((item) =>
-                            widget.empID == item.employID &&
-                            item.status == 'Finished')
-                        .toList();
-
-                    if (filteredData.isNotEmpty) {
-                      return ListView.builder(
-                        itemCount: filteredData.length,
-                        itemBuilder: (BuildContext context, int index) {
-                          final item = filteredData[index];
-
-                          List<String> dateParts = formatDateTime(item.date);
-
-                          return Padding(
-                            padding: const EdgeInsets.all(10),
-                            child: Container(
-                              decoration: const BoxDecoration(
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(20)),
-                                color: Color.fromARGB(255, 255, 255, 255),
-                              ),
-                              child: ListTile(
+                                child: ListTile(
                                   leading: CircleAvatar(
                                     radius: 20,
                                     backgroundColor: Colors.grey.shade300,
@@ -281,24 +219,98 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                                     'Qty: ${item.assignedQuantity}'.toString(),
                                     style: const TextStyle(fontSize: 10),
                                   ),
-                                  trailing: const Text(
-                                    'Finished',
-                                    style: TextStyle(
-                                        fontSize: 10, color: Colors.green),
-                                  )),
-                            ),
-                          );
-                        },
-                      );
+                                  trailing: TextButton(
+                                    onPressed: () {
+                                      pageNavigator(
+                                        CutterFinishItems(emp: item),
+                                        context,
+                                      );
+                                    },
+                                    child: const Text('Add to Finish'),
+                                  ),
+                                ),
+                              ),
+                            );
+                          },
+                        );
+                      } else {
+                        return const NoDataScreen();
+                      }
+                    } else if (snapshot.hasError) {
+                      return Text('Error: ${snapshot.error}');
                     } else {
-                      return const NoDataScreen();
+                      return const ShimmerListTile();
                     }
-                  } else if (snapshot.hasError) {
-                    return Text('Error: ${snapshot.error}');
-                  } else {
-                    return const ShimmerListTile();
-                  }
-                },
+                  },
+                ),
+              ),
+              RefreshIndicator(
+                onRefresh: _refreshData,
+                child: FutureBuilder(
+                  future: cutterAssItemStream,
+                  builder: (context,
+                      AsyncSnapshot<List<CutterAssignModel>> snapshot) {
+                    if (snapshot.hasData) {
+                      final filteredData = snapshot.data!
+                          .where((item) =>
+                              widget.empID == item.employID &&
+                              item.status == 'Finished')
+                          .toList();
+
+                      if (filteredData.isNotEmpty) {
+                        return ListView.builder(
+                          itemCount: filteredData.length,
+                          itemBuilder: (BuildContext context, int index) {
+                            final item = filteredData[index];
+
+                            List<String> dateParts = formatDateTime(item.date);
+
+                            return Padding(
+                              padding: const EdgeInsets.all(10),
+                              child: Container(
+                                decoration: const BoxDecoration(
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(20)),
+                                  color: Color.fromARGB(255, 255, 255, 255),
+                                ),
+                                child: ListTile(
+                                    leading: CircleAvatar(
+                                      radius: 20,
+                                      backgroundColor: Colors.grey.shade300,
+                                      child: Text(
+                                        '${dateParts[1]}\n${dateParts[0]}',
+                                        textAlign: TextAlign.center,
+                                        style: const TextStyle(fontSize: 10),
+                                      ),
+                                    ),
+                                    title: Text(
+                                      '${item.material} - ${item.product}',
+                                      style: const TextStyle(fontSize: 12),
+                                    ),
+                                    subtitle: Text(
+                                      'Qty: ${item.assignedQuantity}'
+                                          .toString(),
+                                      style: const TextStyle(fontSize: 10),
+                                    ),
+                                    trailing: const Text(
+                                      'Finished',
+                                      style: TextStyle(
+                                          fontSize: 10, color: Colors.green),
+                                    )),
+                              ),
+                            );
+                          },
+                        );
+                      } else {
+                        return const NoDataScreen();
+                      }
+                    } else if (snapshot.hasError) {
+                      return Text('Error: ${snapshot.error}');
+                    } else {
+                      return const ShimmerListTile();
+                    }
+                  },
+                ),
               ),
             ],
           ),

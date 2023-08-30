@@ -1004,7 +1004,7 @@ class CallApi {
 
   //Finishing
   static finishProduct(FinishModel bData) async {
-    var url = Uri.parse(getFinishing);
+    var url = Uri.parse(addFinishing);
     try {
       final res = await http.post(url,
           headers: {"Content-Type": "application/json"},
